@@ -1,0 +1,116 @@
+.dashboard {
+  padding: 48px 0 80px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  gap: 16px;
+}
+
+.dashboard-title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.dashboard-sub {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.album-card {
+  display: block;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.album-card:hover {
+  border-color: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+.album-card-body {
+  padding: 28px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.album-card-icon {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(201,169,110,0.08);
+  border-radius: var(--radius);
+  color: var(--accent);
+  border: 1px solid rgba(201,169,110,0.15);
+}
+
+.album-card-info { flex: 1; min-width: 0; }
+
+.album-card-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.album-card-desc {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.album-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.album-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+}
+
+.album-shared {
+  color: var(--accent) !important;
+}
+
+@media (max-width: 600px) {
+  .dashboard { padding: 32px 0 60px; }
+  .dashboard-header { flex-direction: column; align-items: flex-start; }
+  .dashboard-title { font-size: 32px; }
+  .albums-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,223 @@
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.media-item {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.media-item:hover {
+  border-color: var(--accent-dark);
+  transform: scale(1.01);
+  z-index: 2;
+}
+
+.media-item:hover .media-overlay {
+  opacity: 1;
+}
+
+.media-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media-thumb-video,
+.media-thumb-file {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  background: var(--bg-3);
+  color: var(--text-3);
+}
+
+.media-thumb-video { color: var(--accent-dark); }
+
+.media-type-label,
+.media-ext {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.media-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px;
+}
+
+.media-name {
+  font-size: 12px;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.media-size {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(4,4,4,0.97);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.15s ease;
+}
+
+.lightbox-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.lightbox-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.lightbox-name {
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+.lightbox-meta {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.lightbox-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.lightbox-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--radius);
+}
+
+.lightbox-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.lightbox-media {
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
+.lightbox-video {
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  border-radius: var(--radius);
+}
+
+.lightbox-file {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-3);
+  text-align: center;
+}
+.lightbox-file p { font-size: 14px; color: var(--text-2); }
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition);
+  z-index: 10;
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.16); }
+.lightbox-prev { left: 12px; }
+.lightbox-next { right: 12px; }
+
+.lightbox-counter {
+  text-align: center;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .media-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 4px;
+  }
+  .lightbox-media { padding: 8px; }
+  .lightbox-name { max-width: 200px; }
+  .lightbox-nav { display: none; }
+}
+
+@media (max-width: 480px) {
+  .media-grid { grid-template-columns: repeat(3, 1fr); }
+}
