@@ -10,13 +10,13 @@ if (token) {
 }
 
 export function getFileUrl(albumId, filename, shareToken) {
-  const base = process.env.REACT_APP_API_URL || '/api';
+  const base = import.meta.env.VITE_API_URL || '/api';
   const tokenParam = shareToken ? `?token=${shareToken}` : '';
   return `${base}/files/serve/${albumId}/${filename}${tokenParam}`;
 }
 
 export function getDownloadUrl(albumId, shareToken) {
-  const base = process.env.REACT_APP_API_URL || '/api';
+  const base = import.meta.env.VITE_API_URL || '/api';
   const tokenParam = shareToken ? `?token=${shareToken}` : '';
   return `${base}/files/download/${albumId}${tokenParam}`;
 }

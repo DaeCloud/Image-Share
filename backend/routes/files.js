@@ -27,7 +27,7 @@ router.get('/serve/:albumId/:filename', optionalAuth, (req, res) => {
   
   if (!authorized) return res.status(403).json({ error: 'Unauthorized' });
   
-  const filePath = path.join(album.folder_path, req.params.filename);
+  const filePath = path.resolve(path.join(album.folder_path, req.params.filename));
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
   
   const mimeType = mime.lookup(req.params.filename) || 'application/octet-stream';
