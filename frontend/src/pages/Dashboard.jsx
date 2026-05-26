@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import { Plus, Images, Link2, Clock } from 'lucide-react';
+import { Plus, Image, Link2, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import CreateAlbumModal from '../components/CreateAlbumModal';
 import './Dashboard.css';
@@ -53,7 +53,7 @@ export default function Dashboard() {
 
         {albums.length === 0 ? (
           <div className="empty-state">
-            <Images size={56} />
+            <Image size={56} />
             <h3>No albums yet</h3>
             <p>Create your first album to start sharing your photos and videos.</p>
             <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
@@ -66,7 +66,7 @@ export default function Dashboard() {
               <Link to={`/album/${album.id}`} key={album.id} className="album-card">
                 <div className="album-card-body">
                   <div className="album-card-icon">
-                    <Images size={28} strokeWidth={1.2} />
+                    <Image size={28} strokeWidth={1.2} />
                   </div>
                   <div className="album-card-info">
                     <h3 className="album-card-name">{album.name}</h3>
@@ -75,7 +75,7 @@ export default function Dashboard() {
                     )}
                     <div className="album-card-meta">
                       <span className="album-meta-item">
-                        <Images size={12} />
+                        <Image size={12} />
                         {album.file_count} file{album.file_count !== 1 ? 's' : ''}
                       </span>
                       <span className="album-meta-item">

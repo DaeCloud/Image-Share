@@ -2,14 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Camera, Download, Upload, Images } from 'lucide-react';
+import { Camera, Download, Upload, Image } from 'lucide-react';
 import DropZone from '../components/DropZone';
 import MediaGrid from '../components/MediaGrid';
 import { getDownloadUrl } from '../utils/api';
 import { formatDistanceToNow } from 'date-fns';
 import './SharedAlbumPage.css';
 
-const BASE = process.env.REACT_APP_API_URL || '/api';
+const BASE = import.meta.env.VITE_API_URL || '/api';
 
 export default function SharedAlbumPage() {
   const { token } = useParams();
@@ -132,7 +132,7 @@ export default function SharedAlbumPage() {
 
         {files.length === 0 ? (
           <div className="empty-state">
-            <Images size={56} />
+            <Image size={56} />
             <h3>No files yet</h3>
             {allow_upload ? (
               <p>Be the first to add photos or videos to this album.</p>
