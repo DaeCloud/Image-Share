@@ -25,7 +25,13 @@ router.post('/register', async (req, res) => {
     const id = uuidv4();
     db.prepare('INSERT INTO users (id, username, email, password_hash) VALUES (?, ?, ?, ?)').run(id, username, email, hash);
     const token = jwt.sign({ id, username, email }, JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).json({ token, user: { id, username, email } });
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.status(201).json({ user: { id, username, email } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -42,10 +48,26 @@ router.post('/login', async (req, res) => {
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
     const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, username: user.username, email: user.email } });
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({ user: { id: user.id, username: user.username, email: user.email } });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+  res.json({ success: true });
 });
 
 // Me

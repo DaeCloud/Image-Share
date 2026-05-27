@@ -2,23 +2,26 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
+  withCredentials: true,
 });
 
-const token = localStorage.getItem('token');
-if (token) {
-  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+function getAuthTokenParam(shareToken) {
+  if (shareToken) {
+    return `?token=${shareToken}`;
+  }
+  return '';
 }
 
 export function getFileUrl(albumId, filename, shareToken) {
   const base = import.meta.env.VITE_API_URL || '/api';
   const encodedFilename = encodeURIComponent(filename);
-  const tokenParam = shareToken ? `?token=${shareToken}` : '';
+  const tokenParam = getAuthTokenParam(shareToken);
   return `${base}/files/serve/${albumId}/${encodedFilename}${tokenParam}`;
 }
 
 export function getDownloadUrl(albumId, shareToken) {
   const base = import.meta.env.VITE_API_URL || '/api';
-  const tokenParam = shareToken ? `?token=${shareToken}` : '';
+  const tokenParam = getAuthTokenParam(shareToken);
   return `${base}/files/download/${albumId}${tokenParam}`;
 }
 
