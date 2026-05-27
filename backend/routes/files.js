@@ -110,4 +110,25 @@ router.post('/upload/:albumId', authenticate, upload.array('files', 50), (req, r
   res.json({ uploaded: insertedFiles.length, files: insertedFiles });
 });
 
+// Delete a file from an album (authenticated, owner only)
+router.delete('/:fileId', authenticate, (req, res) => {
+  const file = db.prepare('SELECT * FROM files WHERE id = ?').get(req.params.fileId);
+  if (!file) return res.status(404).json({ error: 'File not found' });
+  
+  const album = db.prepare('SELECT * FROM albums WHERE id = ? AND user_id = ?').get(file.album_id, req.user.id);
+  if (!album) return res.status(403).json({ error: 'Unauthorized' });
+  
+  const filePath = path.join(album.folder_path, file.filename);
+  
+  // Delete from filesystem
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+  
+  // Delete from database
+  db.prepare('DELETE FROM files WHERE id = ?').run(req.params.fileId);
+  
+  res.json({ success: true, message: 'File deleted' });
+});
+
 module.exports = router;

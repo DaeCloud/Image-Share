@@ -64,4 +64,40 @@ router.post('/:id/share', authenticate, (req, res) => {
   res.json(shareLink);
 });
 
+// Rename album (authenticated, owner only)
+router.patch('/:id', authenticate, (req, res) => {
+  const album = db.prepare('SELECT * FROM albums WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  if (!album) return res.status(404).json({ error: 'Album not found' });
+  
+  const { name, description } = req.body;
+  if (!name) return res.status(400).json({ error: 'Album name required' });
+  
+  db.prepare('UPDATE albums SET name = ?, description = ? WHERE id = ?').run(name, description || null, req.params.id);
+  
+  const updated = db.prepare('SELECT * FROM albums WHERE id = ?').get(req.params.id);
+  res.json(updated);
+});
+
+// Delete album (authenticated, owner only)
+router.delete('/:id', authenticate, (req, res) => {
+  const album = db.prepare('SELECT * FROM albums WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  if (!album) return res.status(404).json({ error: 'Album not found' });
+  
+  // Delete all files in the album from database
+  db.prepare('DELETE FROM files WHERE album_id = ?').run(req.params.id);
+  
+  // Delete share links
+  db.prepare('DELETE FROM share_links WHERE album_id = ?').run(req.params.id);
+  
+  // Delete album folder from filesystem
+  if (fs.existsSync(album.folder_path)) {
+    fs.rmSync(album.folder_path, { recursive: true, force: true });
+  }
+  
+  // Delete album from database
+  db.prepare('DELETE FROM albums WHERE id = ?').run(req.params.id);
+  
+  res.json({ success: true, message: 'Album deleted' });
+});
+
 module.exports = router;

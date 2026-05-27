@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getFileUrl, isImage, isVideo, formatBytes } from '../utils/api';
-import { X, ChevronLeft, ChevronRight, Download, FileText, Film, Image } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Download, FileText, Film, Image, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import './MediaGrid.css';
 
@@ -45,8 +45,9 @@ function Thumbnail({ file, albumId, shareToken, onClick }) {
   );
 }
 
-export default function MediaGrid({ files, albumId, shareToken }) {
+export default function MediaGrid({ files, albumId, shareToken, onFileDelete }) {
   const [lightbox, setLightbox] = useState(null); // index
+  const [deleting, setDeleting] = useState(false);
 
   const openLightbox = (i) => setLightbox(i);
   const closeLightbox = () => setLightbox(null);
@@ -57,6 +58,18 @@ export default function MediaGrid({ files, albumId, shareToken }) {
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowLeft') prev();
     if (e.key === 'ArrowRight') next();
+  };
+
+  const handleDelete = async () => {
+    if (!current || !onFileDelete) return;
+    if (!window.confirm(`Delete "${current.original_name}"?`)) return;
+    
+    setDeleting(true);
+    try {
+      await onFileDelete(current.id);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const current = lightbox !== null ? files[lightbox] : null;
@@ -93,6 +106,16 @@ export default function MediaGrid({ files, albumId, shareToken }) {
               >
                 <Download size={16} />
               </a>
+              {onFileDelete && (
+                <button 
+                  className="btn btn-ghost lightbox-btn"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  title="Delete file"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
               <button className="btn btn-ghost lightbox-btn" onClick={closeLightbox}>
                 <X size={18} />
               </button>

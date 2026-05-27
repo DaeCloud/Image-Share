@@ -9,10 +9,10 @@ services:
       - JWT_SECRET=${JWT_SECRET:-change_this_secret_in_production}
       - UPLOADS_DIR=/uploads
       - DB_DIR=/data
-      - FRONTEND_URL=http://photoshare.crookshannks.daecloud.co.za:14586
+      - FRONTEND_URL=https://imageshare.6180.co.za
     volumes:
-      - uploads:/uploads
-      - db_data:/data
+      - /APPBOX_DATA/storage/image-share/uploads:/uploads
+      - /APPBOX_DATA/storage/image-share/db_data:/data
     networks:
       - app
 

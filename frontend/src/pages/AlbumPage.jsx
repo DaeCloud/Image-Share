@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api, { getFileUrl, getDownloadUrl } from '../utils/api';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Share2, Download, Upload, Link2, Check, Copy } from 'lucide-react';
+import { ArrowLeft, Share2, Download, Upload, Link2, Check, Copy, Edit2, Trash2, X } from 'lucide-react';
 import DropZone from '../components/DropZone';
 import MediaGrid from '../components/MediaGrid';
 import './AlbumPage.css';
@@ -17,6 +17,10 @@ export default function AlbumPage() {
   const [uploading, setUploading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [renameForm, setRenameForm] = useState({ name: '', description: '' });
+  const [renamingAlbum, setRenamingAlbum] = useState(false);
+  const [deletingAlbum, setDeletingAlbum] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -72,6 +76,56 @@ export default function AlbumPage() {
       toast.error(err.response?.data?.error || 'Upload failed', { id: 'upload' });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDeleteFile = async (fileId) => {
+    try {
+      await api.delete(`/files/${fileId}`);
+      setFiles(files => files.filter(f => f.id !== fileId));
+      toast.success('File deleted');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete file');
+    }
+  };
+
+  const handleOpenRenameModal = () => {
+    setRenameForm({ name: album.name, description: album.description || '' });
+    setShowRenameModal(true);
+  };
+
+  const handleRenameAlbum = async () => {
+    if (!renameForm.name.trim()) {
+      toast.error('Album name required');
+      return;
+    }
+    setRenamingAlbum(true);
+    try {
+      const res = await api.patch(`/albums/${id}`, {
+        name: renameForm.name,
+        description: renameForm.description || null
+      });
+      setAlbum(res.data);
+      setShowRenameModal(false);
+      toast.success('Album renamed!');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to rename album');
+    } finally {
+      setRenamingAlbum(false);
+    }
+  };
+
+  const handleDeleteAlbum = async () => {
+    if (!window.confirm(`Delete album "${album.name}" and all its files? This cannot be undone.`)) return;
+    
+    setDeletingAlbum(true);
+    try {
+      await api.delete(`/albums/${id}`);
+      toast.success('Album deleted');
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete album');
+      setDeletingAlbum(false);
     }
   };
 
@@ -132,6 +186,24 @@ export default function AlbumPage() {
                   {copied ? 'Copied!' : 'Copy Link'}
                 </button>
               )}
+              <button
+                className="btn btn-secondary"
+                onClick={handleOpenRenameModal}
+                title="Rename album"
+              >
+                <Edit2 size={15} />
+                Rename
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={handleDeleteAlbum}
+                disabled={deletingAlbum}
+                title="Delete album"
+                style={{ color: '#ef4444' }}
+              >
+                <Trash2 size={15} />
+                Delete
+              </button>
             </div>
           </div>
 
@@ -166,7 +238,53 @@ export default function AlbumPage() {
             </button>
           </div>
         ) : (
-          <MediaGrid files={files} albumId={id} />
+          <MediaGrid files={files} albumId={id} onFileDelete={handleDeleteFile} />
+        )}
+
+        {/* Rename Modal */}
+        {showRenameModal && (
+          <div className="modal-overlay" onClick={() => !renamingAlbum && setShowRenameModal(false)}>
+            <div className="modal-dialog" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Rename Album</h2>
+                <button className="btn btn-ghost" onClick={() => setShowRenameModal(false)}>
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type="text"
+                  placeholder="Album name"
+                  value={renameForm.name}
+                  onChange={(e) => setRenameForm(f => ({ ...f, name: e.target.value }))}
+                  className="form-input"
+                />
+                <textarea
+                  placeholder="Description (optional)"
+                  value={renameForm.description}
+                  onChange={(e) => setRenameForm(f => ({ ...f, description: e.target.value }))}
+                  className="form-input"
+                  rows="3"
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowRenameModal(false)}
+                  disabled={renamingAlbum}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleRenameAlbum}
+                  disabled={renamingAlbum}
+                >
+                  {renamingAlbum ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
