@@ -94,12 +94,12 @@ export default function SharedAlbumPage() {
             <span>PhotoShare</span>
           </div>
           <div className="shared-header-right">
-            {files.length > 0 && (
+            {/* {files.length > 0 && (
               <a href={downloadUrl} className="btn btn-secondary" download target="_blank" rel="noreferrer">
                 <Download size={14} />
                 Download All
               </a>
-            )}
+            )} */}
             {allow_upload && (
               <button className="btn btn-primary" onClick={() => setShowUpload(s => !s)}>
                 <Upload size={14} />
