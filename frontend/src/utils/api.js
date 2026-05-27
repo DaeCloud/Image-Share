@@ -11,8 +11,9 @@ if (token) {
 
 export function getFileUrl(albumId, filename, shareToken) {
   const base = import.meta.env.VITE_API_URL || '/api';
+  const encodedFilename = encodeURIComponent(filename);
   const tokenParam = shareToken ? `?token=${shareToken}` : '';
-  return `${base}/files/serve/${albumId}/${filename}${tokenParam}`;
+  return `${base}/files/serve/${albumId}/${encodedFilename}${tokenParam}`;
 }
 
 export function getDownloadUrl(albumId, shareToken) {

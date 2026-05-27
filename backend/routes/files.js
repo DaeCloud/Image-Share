@@ -27,7 +27,13 @@ router.get('/serve/:albumId/:filename', optionalAuth, (req, res) => {
   
   if (!authorized) return res.status(403).json({ error: 'Unauthorized' });
   
-  const filePath = path.resolve(path.join(album.folder_path, req.params.filename));
+  // Security: prevent path traversal attacks
+  const normalizedPath = path.normalize(req.params.filename);
+  if (normalizedPath.startsWith('..') || normalizedPath.includes('/') || normalizedPath.includes('\\')) {
+    return res.status(403).json({ error: 'Invalid filename' });
+  }
+  
+  const filePath = path.resolve(path.join(album.folder_path, normalizedPath));
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
   
   const mimeType = mime.lookup(req.params.filename) || 'application/octet-stream';
